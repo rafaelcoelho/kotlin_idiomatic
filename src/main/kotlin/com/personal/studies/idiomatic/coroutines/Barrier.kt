@@ -8,13 +8,11 @@ fun main() {
     runBlocking {
         CoroutineScope(Dispatchers.IO).launch {
             println("Running on  0 ---------> " + Thread.currentThread().name)
+
             withContext(Dispatchers.Unconfined) {
                 println("Running on  1 ---------> " + Thread.currentThread().name)
-                println(measureTimeMillis { println(fetchSomeDataConcurrent("RockStarProgrammer_concurrent")) })
-                println(measureTimeMillis { println(fetchSomeDataSequential("RockStarProgrammer")) })
-
-                println(measureTimeMillis { println(fetchSomeDataConcurrent("TheNbaPlayer")) })
-                println(measureTimeMillis { println(fetchSomeDataSequential("TheNbaPlayer")) })
+                println("Took: ${measureTimeMillis { println(fetchSomeDataConcurrent("RockStarProgrammer_concurrent")) }}ms")
+                println("Took: ${measureTimeMillis { println(fetchSomeDataSequential("RockStarProgrammer")) }}")
             }
             println("Running on  10 ---------> " + Thread.currentThread().name)
         }.join()
