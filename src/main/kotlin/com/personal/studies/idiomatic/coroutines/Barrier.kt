@@ -6,15 +6,34 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
     runBlocking {
-        println(measureTimeMillis { fetchSomeDataConcurrent("RockStarProgrammer") })
-        println(measureTimeMillis { fetchSomeDataSequential("RockStarProgrammer") })
+        CoroutineScope(Dispatchers.IO).launch {
+            println("Running on  0 ---------> " + Thread.currentThread().name)
+            withContext(Dispatchers.Unconfined) {
+                println("Running on  1 ---------> " + Thread.currentThread().name)
+                println(measureTimeMillis { println(fetchSomeDataConcurrent("RockStarProgrammer_concurrent")) })
+                println(measureTimeMillis { println(fetchSomeDataSequential("RockStarProgrammer")) })
 
-        println(measureTimeMillis { fetchSomeDataConcurrent("TheNbaPlayer") })
-        println(measureTimeMillis { fetchSomeDataSequential("TheNbaPlayer") })
+                println(measureTimeMillis { println(fetchSomeDataConcurrent("TheNbaPlayer")) })
+                println(measureTimeMillis { println(fetchSomeDataSequential("TheNbaPlayer")) })
+            }
+            println("Running on  10 ---------> " + Thread.currentThread().name)
+        }.join()
     }
+
+//    runBlocking {
+//        println(measureTimeMillis { println(fetchSomeDataConcurrent("RockStarProgrammer")) })
+//        println(measureTimeMillis { println(fetchSomeDataSequential("RockStarProgrammer")) })
+//
+//        println(measureTimeMillis { println(fetchSomeDataConcurrent("TheNbaPlayer")) })
+//        println(measureTimeMillis { println(fetchSomeDataSequential("TheNbaPlayer")) })
+//
+//        println("Running on  2 ---------> " + Thread.currentThread().name)
+//    }
 }
 
 suspend fun fetchSomeDataConcurrent(dataKey: String) = coroutineScope {
+    println("Running on  1 2 ---------> " + Thread.currentThread().name)
+
     println("Fetching data concurrent")
     val name = getName(dataKey)
     val picture = getPicture(dataKey)
@@ -33,7 +52,11 @@ suspend fun fetchSomeDataSequential(dataKey: String) = coroutineScope {
 data class JoinData(val name: String, val picture: String)
 
 private fun CoroutineScope.getName(key: String) = async {
-    delay(225)
+    println("Running on  1 2 3---------> " + Thread.currentThread().name)
+
+    delay(2010)
+
+    println("Running on  1 2 3---------> " + Thread.currentThread().name)
     key
 }
 
